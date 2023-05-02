@@ -1,0 +1,51 @@
+#There was a problem with encoding when directly using the data parsed
+# by the package below, so I decided to first export it as a csv file,
+#to only THEN handle the data. 
+# Expect to see a lot of stupid code dominated by the motto: 
+# "if it look stupid but it work, IT AIN'T STUPID."
+
+import sif_parser as sp
+
+def save(wv,data, sample):
+
+    if sample == 0: #Nil for Ruby, 1 for Rhodamine
+        fn = 'IntPhysExp\\02 Photoluminescence\\Readable_data\\Rby s'
+    else: 
+        fn = 'IntPhysExp\\02 Photoluminescence\\Readable_data\\Rho s25 05-20 '
+
+    wv = str(wv)
+    route_name = fn + wv + '.csv'
+
+    f = open(route_name, "a")
+    f.write("wavelength,count\n")
+
+    for i in range(0,len(data)):
+        wavelength = str(float(data[i][0]))
+        counts = str(int(data[i][1]))
+        f.write(wavelength+ "," + counts +"\n")
+    
+    f.close
+
+data_to_convert = []
+for i in range(5,35,5):
+    data_to_convert.append(i)
+
+for i in data_to_convert:
+    for j in range(1,6):
+        dir = 'IntPhysExp\\02 Photoluminescence\\Raw_sif\\Ruby s'
+        serial = str(i) + '-' + str(j)
+        dir = dir + serial + ".sif"
+
+        data,info = sp.utils.parse(dir)
+        print(info)
+        # save(serial,data,0)
+
+# data_to_convert = [1,2,3,4,5]
+
+# for wavelength in data_to_convert:
+#     dir = 'C:\\Users\\chwan\\OneDrive\\Documents\\04 Python Scripts\\IntPhysExp\\02 Photoluminescence\\Rhodamine 590\\Rt s25 05-20 '
+#     dir = dir + str(wavelength) + ".sif"
+
+#     data,info = sp.utils.parse(dir)
+    
+#     save(wavelength,data,1)
